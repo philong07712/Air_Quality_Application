@@ -83,7 +83,7 @@ class _PredictItem extends StatelessWidget {
     var theme = Theme.of(context).textTheme;
     var color = Colors.green.shade800;
     if (aqi > 50) {
-      color = Colors.yellow.shade700;
+      color = Colors.yellow.shade800;
       status = StatusCode.moderate;
     }
     if (aqi > 100) {
