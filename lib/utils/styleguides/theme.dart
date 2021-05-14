@@ -12,7 +12,7 @@ const TextTheme TEXT_THEME_DEFAULT = TextTheme(
   headline5: TextStyle(
       color: blackColor, fontWeight: FontWeight.w700, fontSize: 14),
   headline6: TextStyle(
-      color: blackColor, fontWeight: FontWeight.w700, fontSize: 12),
+      color: blackColor, fontWeight: FontWeight.w700, fontSize: 12, height: 1,),
   bodyText1: TextStyle(
       color: blackColor, fontWeight: FontWeight.w500, fontSize: 14, height: 1.5),
   bodyText2: TextStyle(
@@ -37,7 +37,7 @@ const TextTheme TEXT_THEME_SMALL = TextTheme(
   headline5: TextStyle(
       color: blackColor, fontWeight: FontWeight.w700, fontSize: 12),
   headline6: TextStyle(
-      color: blackColor, fontWeight: FontWeight.w700, fontSize: 10),
+      color: blackColor, fontWeight: FontWeight.w700, fontSize: 10, height: 1, letterSpacing: 1),
   bodyText1: TextStyle(
       color: blackColor, fontWeight: FontWeight.w500, fontSize: 12, height: 1.5),
   bodyText2: TextStyle(

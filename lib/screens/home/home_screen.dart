@@ -26,13 +26,10 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            flex: 1,
-            child: _Prediction(
-              f1: 30,
-              f8: 60,
-              f24: 200,
-            ),
+          _Prediction(
+            f1: 30,
+            f8: 60,
+            f24: 120,
           ),
           Expanded(
             flex: 5,
@@ -82,46 +79,61 @@ class _PredictItem extends StatelessWidget {
     var size = MediaQuery.of(context).size;
     var theme = Theme.of(context).textTheme;
     var color = Colors.green.shade800;
+    var lightColor = Colors.green.shade600;
     if (aqi > 50) {
       color = Colors.yellow.shade800;
+      lightColor = Colors.yellow.shade700;
       status = StatusCode.moderate;
     }
     if (aqi > 100) {
-      color = Colors.deepOrangeAccent;
+      color = Colors.deepOrange.shade700;
+      lightColor = Colors.deepOrange.shade500;
       status = StatusCode.unhealthySensitive;
     }
     if (aqi > 150) {
-      color = Colors.red;
+      color = Colors.redAccent.shade700;
+      lightColor = Colors.redAccent.shade400;
       status = StatusCode.unhealthy;
     }
     if (aqi > 200) {
-      color = Colors.purple;
+      color = Colors.purple.shade700;
+      lightColor = Colors.purple.shade400;
       status = StatusCode.veryUnhealthy;
     }
     if (aqi > 300) {
       color = Colors.red.shade900;
+      lightColor = Colors.red.shade700;
       status = StatusCode.hazardous;
     }
     return Container(
       width: size.width / 4,
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            color, lightColor
+          ]
+        ),
+        borderRadius: BorderRadius.circular(15),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             title,
             style: theme.headline3
-                ?.apply(color: Colors.black, fontWeightDelta: -2),
+                ?.apply(color: Colors.white, fontWeightDelta: -2),
           ).center(),
           addVerticalSpace(10),
           Text(
             'AQI: $aqi',
             style: theme.headline5?.apply(
-                color: Colors.black, fontWeightDelta: -1, fontSizeFactor: 1.2),
+                color: Colors.white, fontWeightDelta: -1, fontSizeFactor: 1.2),
           ).center(),
           addVerticalSpace(10),
           Text(
             status,
-            style: theme.bodyText1?.apply(color: color, fontWeightDelta: 1),
+            style: theme.bodyText1?.apply(color: Colors.white, fontWeightDelta: 1),
           ).center()
         ],
       ),
