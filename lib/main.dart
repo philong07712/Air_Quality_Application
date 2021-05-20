@@ -2,10 +2,12 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:air_quality_application/components/my_bottom_navigation.dart';
+import 'package:air_quality_application/service/HttpService.dart';
 import 'package:air_quality_application/utils/styleguides/colors.dart';
 import 'package:air_quality_application/utils/styleguides/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,15 +25,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = window.physicalSize.width;
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: Colors.white,
-        accentColor: darkBlueGradientColor,
-        textTheme: screenWidth < 500 ? TEXT_THEME_SMALL : TEXT_THEME_DEFAULT,
-        fontFamily: 'Montserrat'
+    return MultiProvider(
+      providers: [
+        Provider<HttpService>(
+          create: (context) => HttpService(),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primaryColor: Colors.white,
+          accentColor: darkBlueGradientColor,
+          textTheme: screenWidth < 500 ? TEXT_THEME_SMALL : TEXT_THEME_DEFAULT,
+          fontFamily: 'Montserrat'
+        ),
+        home: MyBottomNavigationBar(),
       ),
-      home: MyBottomNavigationBar(),
     );
   }
 }

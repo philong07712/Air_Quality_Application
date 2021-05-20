@@ -1,55 +1,80 @@
+import 'package:air_quality_application/models/Recommend.dart';
+import 'package:air_quality_application/service/HttpService.dart';
+import 'package:air_quality_application/utils/styleguides/colors.dart';
 import 'package:air_quality_application/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:air_quality_application/utils/widget_extensions.dart';
+import 'package:provider/provider.dart';
 
 class RecommendScreen extends StatelessWidget {
   int aqi = 108;
   String status = 'Unhealthy for Sensitive Groups';
   @override
   Widget build(BuildContext context) {
+    var httpService = Provider.of<HttpService>(context, listen: false);
     var theme = Theme.of(context).textTheme;
+    var size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        body: Column(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                child: Text(
-                  'Recommend',
-                  style: theme.headline2?.apply(
-                    fontWeightDelta: -1,
+        body: FutureBuilder(
+          future: httpService.fetchRecommend(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              Recommend recommend = snapshot.data as Recommend;
+              return Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    width: size.width,
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [
+                          darkBlueGradientColor,
+                          lightBlueGradientColor
+                        ])),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Recommend',
+                        style: theme.headline5?.apply(
+                            fontWeightDelta: -2,
+                            fontSizeFactor: 1.2,
+                            color: Colors.white),
+                      ).center(),
+                    ),
                   ),
-                ),
-              ),
-            ),
-            addVerticalSpace(15),
-            Text('Current AQI', style: theme.headline3?.apply()),
-            addVerticalSpace(15),
-            Text(
-              '$aqi',
-              style: theme.headline4?.apply(
-                fontSizeFactor: 1.5,
-              ),
-            ),
-            addVerticalSpace(15),
-            Text(
-              status,
-              style: theme.headline6?.apply(
-                  color: Colors.deepOrange.shade700, fontSizeFactor: 1.5),
-            ),
-            addVerticalSpace(16),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-              child: _DetailRecommend(
-                  sensitive: 'People with asthma are the group most at risk.',
-                  effect:
-                      ' Increasing likelihood of respiratory symptoms, such as chest tightness and breathing discomfort, in people with asthma.',
-                  caution:
-                      'People with asthma should consider limiting outdoor exertion.'),
-            )
-          ],
+                  addVerticalSpace(15),
+                  Text('Current AQI', style: theme.headline3?.apply()),
+                  addVerticalSpace(15),
+                  Text(
+                    '${recommend.aqi}',
+                    style: theme.headline4?.apply(
+                      fontSizeFactor: 1.5,
+                    ),
+                  ),
+                  addVerticalSpace(15),
+                  Text(
+                    status,
+                    style: theme.headline6?.apply(
+                        color: Colors.deepOrange.shade700, fontSizeFactor: 1.5),
+                  ),
+                  addVerticalSpace(16),
+                  Padding(
+                    padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                    child: _DetailRecommend(
+                        sensitive:
+                        recommend.sensitive,
+                        effect:
+                        recommend.effect,
+                        caution:
+                        recommend.caution),
+                  )
+                ],
+              );
+            }
+            return CircularProgressIndicator(
+            ).center();
+          },
         ),
       ),
     );
@@ -82,7 +107,7 @@ class _DetailRecommend extends StatelessWidget {
                 fontSizeFactor: 1.2,
                 fontWeightDelta: -1,
                 color: Colors.grey.shade800,
-            heightFactor: 1.5),
+                heightFactor: 1.5),
           ),
           addVerticalSpace(30),
           Text(
@@ -96,7 +121,7 @@ class _DetailRecommend extends StatelessWidget {
                 fontSizeFactor: 1.2,
                 fontWeightDelta: -1,
                 color: Colors.grey.shade800,
-            heightFactor: 1.5),
+                heightFactor: 1.5),
           ),
           addVerticalSpace(30),
           Text(
@@ -106,12 +131,11 @@ class _DetailRecommend extends StatelessWidget {
           addVerticalSpace(10),
           Text(
             caution,
-
             style: theme.headline6?.apply(
                 fontSizeFactor: 1.2,
                 fontWeightDelta: -1,
                 color: Colors.grey.shade800,
-            heightFactor: 1.5),
+                heightFactor: 1.5),
           ),
         ],
       ),

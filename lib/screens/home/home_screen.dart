@@ -1,46 +1,78 @@
 import 'package:air_quality_application/components/InfoBigCard.dart';
+import 'package:air_quality_application/models/Data.dart';
+import 'package:air_quality_application/models/Predict.dart';
+import 'package:air_quality_application/service/HttpService.dart';
 import 'package:air_quality_application/utils/constants.dart';
 import 'package:air_quality_application/utils/styleguides/colors.dart';
 import 'package:air_quality_application/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:air_quality_application/utils/widget_extensions.dart';
+import 'package:provider/provider.dart';
+
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var httpService = Provider.of<HttpService>(context, listen: false);
     var theme = Theme.of(context).textTheme;
+    var size = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            width: size.width,
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [darkBlueGradientColor, lightBlueGradientColor])),
+            child: Align(
+              alignment: Alignment.center,
               child: Text(
-                'AQI Prediction',
-                style: theme.headline2?.apply(
-                  fontWeightDelta: -1,
-                ),
-              ),
+                'Prediction',
+                style: theme.headline5?.apply(
+                    fontWeightDelta: -2,
+                    fontSizeFactor: 1.2,
+                    color: Colors.white),
+              ).center(),
             ),
           ),
-          _Prediction(
-            f1: 30,
-            f8: 60,
-            f24: 120,
+          addVerticalSpace(15),
+          FutureBuilder(
+            future: httpService.fetchPredict(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                Predict predict = snapshot.data as Predict;
+                return _Prediction(
+                  f1: predict.f1,
+                  f8: predict.f8,
+                  f24: predict.f24,
+                );
+              }
+              return CircularProgressIndicator();
+            },
           ),
-          Expanded(
-            flex: 5,
-            child: _DetailList(
-              aqi: 43,
-              pm: 0.02,
-              co2: 219.45,
-              co: 1.57,
-              temperature: 33.8,
-              humidity: 60,
-            ),
+          addVerticalSpace(20),
+          FutureBuilder(
+            future: httpService.fetchData(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                Data data = snapshot.data as Data;
+                return Expanded(
+                  flex: 5,
+                  child: _DetailList(
+                    aqi: data.aqi,
+                    pm: data.pm,
+                    co2: data.co,
+                    co: data.co2,
+                    temperature: data.temperature,
+                    humidity: data.humidity,
+                  ),
+                );
+              }
+              return CircularProgressIndicator().center();
+            },
           )
         ],
       ),
@@ -109,11 +141,7 @@ class _PredictItem extends StatelessWidget {
       width: size.width / 4,
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            color, lightColor
-          ]
-        ),
+        gradient: LinearGradient(colors: [color, lightColor]),
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
@@ -133,7 +161,8 @@ class _PredictItem extends StatelessWidget {
           addVerticalSpace(10),
           Text(
             status,
-            style: theme.bodyText1?.apply(color: Colors.white, fontWeightDelta: 1),
+            style:
+                theme.bodyText1?.apply(color: Colors.white, fontWeightDelta: 1),
           ).center()
         ],
       ),
@@ -173,7 +202,7 @@ class _DetailList extends StatelessWidget {
               ),
               InfoBigCard(
                 firstText: '$co2 ppm',
-                secondText: 'CO2',
+                secondText: 'CO\u2082',
                 icon: Icon(
                   Icons.speed,
                   size: 25,
@@ -194,7 +223,7 @@ class _DetailList extends StatelessWidget {
                 ),
               ),
               InfoBigCard(
-                firstText: '$pm mg/m3',
+                firstText: '$pm mg/m\u00B3',
                 secondText: 'PM2.5',
                 icon: Icon(
                   Icons.delete_sweep_rounded,
@@ -207,7 +236,7 @@ class _DetailList extends StatelessWidget {
           TableRow(
             children: [
               InfoBigCard(
-                firstText: '$temperature C',
+                firstText: '$temperature \u2070C',
                 secondText: 'temperature',
                 icon: Icon(
                   Icons.whatshot,

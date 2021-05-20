@@ -8,7 +8,7 @@ class Data {
     if (json == null) return Data();
     Data data = Data();
     data.aqi = json['aqi'];
-    data.time = json['time'];
+    data.time = DateTime.fromMillisecondsSinceEpoch(json['time'] as int);
     data.co2 = json['co2'];
     data.co = json['co'];
     data.pm = json['pm'];
@@ -17,15 +17,4 @@ class Data {
     return data;
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'time': this.time,
-      'aqi': this.aqi,
-      'co2': this.co2,
-      'co': this.co,
-      'pm': this.pm,
-      'temperature': this.temperature,
-      'humidity': this.humidity,
-    };
-  }
 }
