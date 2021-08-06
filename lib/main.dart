@@ -5,13 +5,15 @@ import 'package:air_quality_application/components/my_bottom_navigation.dart';
 import 'package:air_quality_application/service/HttpService.dart';
 import 'package:air_quality_application/utils/styleguides/colors.dart';
 import 'package:air_quality_application/utils/styleguides/theme.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
+  await Firebase.initializeApp();
   if (Platform.isAndroid) {
     SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
       statusBarColor: Colors.transparent

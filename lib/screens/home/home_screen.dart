@@ -3,8 +3,10 @@ import 'package:air_quality_application/models/Data.dart';
 import 'package:air_quality_application/models/Predict.dart';
 import 'package:air_quality_application/service/HttpService.dart';
 import 'package:air_quality_application/utils/constants.dart';
+import 'package:air_quality_application/utils/string_utils.dart';
 import 'package:air_quality_application/utils/styleguides/colors.dart';
 import 'package:air_quality_application/utils/widget_functions.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:air_quality_application/utils/widget_extensions.dart';
@@ -39,11 +41,13 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           addVerticalSpace(15),
-          FutureBuilder(
-            future: httpService.fetchPredict(),
+          StreamBuilder(
+            stream: httpService.fetchPredict(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                Predict predict = snapshot.data as Predict;
+                Event event = snapshot.data as Event;
+                final predictMap = parseDynamicToMap(event.snapshot.value);
+                Predict predict = Predict.fromJson(predictMap);
                 return _Prediction(
                   f1: predict.f1,
                   f8: predict.f8,
@@ -54,11 +58,16 @@ class HomeScreen extends StatelessWidget {
             },
           ),
           addVerticalSpace(20),
-          FutureBuilder(
-            future: httpService.fetchData(),
+          StreamBuilder(
+            stream: httpService.fetchData(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                Data data = snapshot.data as Data;
+                Event event = snapshot.data as Event;
+                final dataMap = parseDynamicToMap(event.snapshot.value);
+                Data data = Data();
+                for(var key in dataMap.keys) {
+                  data = Data.fromJson(dataMap[key]);
+                }
                 return Expanded(
                   flex: 5,
                   child: _DetailList(

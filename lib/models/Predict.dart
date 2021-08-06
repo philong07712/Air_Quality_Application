@@ -6,9 +6,9 @@ class Predict {
   factory Predict.fromJson(Map<String, dynamic> json) {
     if (json == null) return Predict();
     Predict predict = Predict();
-    predict.f1 = json['f1'];
-    predict.f8 = json['f8'];
-    predict.f24 = json['f24'];
+    predict.f1 = (json['f1'] as double).toInt();
+    predict.f8 = (json['f8'] as double).toInt();
+    predict.f24 = (json['f24'] as double).toInt();
     return predict;
   }
 }

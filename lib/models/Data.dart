@@ -7,13 +7,13 @@ class Data {
   factory Data.fromJson(Map<String, dynamic> json) {
     if (json == null) return Data();
     Data data = Data();
-    data.aqi = json['aqi'];
-    data.time = DateTime.fromMillisecondsSinceEpoch(json['time'] as int);
+    data.aqi = (json['aqi'] as double).toInt();
+    data.time = DateTime.fromMillisecondsSinceEpoch((json['time'] as double).toInt());
     data.co2 = json['co2'];
     data.co = json['co'];
     data.pm = json['pm'];
-    data.temperature = json['temperature'];
-    data.humidity = json['humidity'];
+    data.temperature = json['temp'];
+    data.humidity = json['humid'];
     return data;
   }
 

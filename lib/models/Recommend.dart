@@ -9,7 +9,7 @@ class Recommend {
   factory Recommend.fromJson(Map<String, dynamic> json) {
     if (json == null) return Recommend();
     Recommend recommend = Recommend();
-    recommend.aqi = json['aqi'];
+    recommend.aqi = (json['aqi'] as double).toInt();
     recommend.sensitive = json['sensitive'];
     recommend.effect = json['effect'];
     recommend.caution = json['caution'];

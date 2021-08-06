@@ -1,6 +1,7 @@
-import 'package:air_quality_application/screens/%20history/history_screen.dart';
+import 'package:air_quality_application/screens/history/history_screen.dart';
 import 'package:air_quality_application/screens/home/home_screen.dart';
 import 'package:air_quality_application/screens/recommend/recommend_screen.dart';
+import 'package:air_quality_application/screens/tab_routes.dart';
 import 'package:air_quality_application/utils/styleguides/colors.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -13,18 +14,22 @@ class MyBottomNavigationBar extends StatefulWidget {
 class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   int _currentIndex = 1;
   final List<Widget> _children = [HistoryScreen(), HomeScreen(), RecommendScreen()];
+  final _navigatorKeys = {
+    0: GlobalKey<NavigatorState>(),
+    1: GlobalKey<NavigatorState>(),
+    2: GlobalKey<NavigatorState>(),
+  };
 
-  void onTappedBar(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+  Future<bool> _onBackPressed(BuildContext context) async {
+    print('onbackpressed');
+    FocusScope.of(context).unfocus();
+    return !await _navigatorKeys[_currentIndex]!.currentState!.maybePop();
   }
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      body: _children[_currentIndex],
+      body: _buildBody(context),
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         child: Container(
@@ -51,6 +56,31 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           Icon(Icons.recommend, size: size.height * 0.04, color: Colors.white,),
         ],
       ),
+    );
+  }
+  Widget _buildOffstageNavigator(int index) {
+    return Offstage(
+      offstage: _currentIndex != index,
+      child: TabNavigator(
+        navigatorKey: _navigatorKeys[index]!,
+        child: _children[index],
+      ),
+    );
+  }
+
+  void onTappedBar(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  Widget _buildBody(BuildContext context) {
+    return Stack(
+      children: [
+        _buildOffstageNavigator(0),
+        _buildOffstageNavigator(1),
+        _buildOffstageNavigator(2),
+      ],
     );
   }
 }

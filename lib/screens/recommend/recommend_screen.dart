@@ -1,7 +1,9 @@
 import 'package:air_quality_application/models/Recommend.dart';
 import 'package:air_quality_application/service/HttpService.dart';
+import 'package:air_quality_application/utils/string_utils.dart';
 import 'package:air_quality_application/utils/styleguides/colors.dart';
 import 'package:air_quality_application/utils/widget_functions.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:air_quality_application/utils/widget_extensions.dart';
 import 'package:provider/provider.dart';
@@ -16,11 +18,13 @@ class RecommendScreen extends StatelessWidget {
     var size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        body: FutureBuilder(
-          future: httpService.fetchRecommend(),
+        body: StreamBuilder(
+          stream: httpService.fetchRecommend(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              Recommend recommend = snapshot.data as Recommend;
+              Event event = snapshot.data as Event;
+              final predictMap = parseDynamicToMap(event.snapshot.value);
+              Recommend recommend = Recommend.fromJson(predictMap);
               return Column(
                 children: [
                   Container(
